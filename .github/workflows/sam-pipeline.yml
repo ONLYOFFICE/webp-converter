@@ -19,7 +19,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      # Set BUCKET_NAME based on the branch
+      # Set BUCKET_NAME environment variable based on the branch
       - name: Set BUCKET_NAME
         run: |
           if [[ "${{ github.ref_name }}" == "develop" ]]; then
@@ -27,7 +27,9 @@ jobs:
           elif [[ "${{ github.ref_name }}" == "main" ]]; then
             echo "BUCKET_NAME=${{ secrets.MAIN_BUCKET_NAME }}" >> $GITHUB_ENV
           fi
-          sed -i "s/'bucket_placeholder'/'${BUCKET_NAME}'/g" ./origin-response-function/handler.js
+          
+      # Set S3 BUCKET NAME
+      - run: sed -i "s/'bucket_placeholder'/'${BUCKET_NAME}'/g" ./origin-response-function/handler.js
 
       # Build and deploy stack
       - run: sam build -u
