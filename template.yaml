@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  webp-conversion
+
+  Sample SAM Template for webp-conversion
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+Parameters:
+  S3Bucket:
+    Type: String
+
+Resources:
+  ViewerRequestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: viewer-request-function/
+      Handler: handler.handler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Timeout: 1
+      Role: !GetAtt WebEdgeLambdaRole.Arn
+  
+  ViewerRequestFunctionVersion:
+    Type: "AWS::Lambda::Version"
+    Properties:
+      FunctionName: !Ref ViewerRequestFunction
+      Description: "A version of ViewerRequestFunction"
+
+  OriginResponseFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: origin-response-function/
+      Handler: handler.handler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 512
+      Timeout: 5
+      Role: !GetAtt WebEdgeLambdaRole.Arn
+
+  OriginResponseFunctionVersion:
+    Type: "AWS::Lambda::Version"
+    Properties:
+      FunctionName: !Ref OriginResponseFunction
+      Description: "A version of OriginResponseFunction"
+# ==== ROLES ==== #
+  WebEdgeLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          -
+            Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+                - "edgelambda.amazonaws.com"
+  # ==== POLICIES ==== #
+  PublishLogsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Allows functions to write logs
+      Roles:
+      - !Ref WebEdgeLambdaRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: '*'
+  PublishS3Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Allows functions to interact with S3
+      Roles:
+      - !Ref WebEdgeLambdaRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+            - s3:GetObject
+            - s3:PutObject
+            Resource: !Sub 'arn:aws:s3:::${S3Bucket}/*'

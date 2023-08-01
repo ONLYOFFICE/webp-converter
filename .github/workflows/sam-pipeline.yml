@@ -1,0 +1,34 @@
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Prepare build and deploy environment
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      # Set BUCKET_NAME based on the branch
+      - name: Set BUCKET_NAME
+        run: |
+          if [[ "${{ github.ref_name }}" == "develop" ]]; then
+            echo "BUCKET_NAME=${{ secrets.DEVELOP_BUCKET_NAME }}" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "BUCKET_NAME=${{ secrets.MAIN_BUCKET_NAME }}" >> $GITHUB_ENV
+          fi
+          sed -i "s/'bucket_placeholder'/'${BUCKET_NAME}'/g" ./origin-response-function/handler.js
+
+      # Build and deploy stack
+      - run: sam build -u
+      - run: sam deploy --config-file ${GITHUB_REF_NAME}-config.toml --parameter-overrides S3Bucket=${BUCKET_NAME}
