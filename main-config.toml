@@ -4,7 +4,7 @@ version = 0.1
 
 [default]
 [default.global.parameters]
-stack_name = "webp-main"
+stack_name = "webp-converter-main"
 
 [default.build.parameters]
 cached = true
@@ -18,7 +18,7 @@ capabilities = "CAPABILITY_IAM"
 confirm_changeset = false
 fail_on_empty_changeset = false
 resolve_s3 = true
-s3_prefix = "webp-main"
+s3_prefix = "webp-converter-main"
 region = "us-east-1"
 image_repositories = []
 
