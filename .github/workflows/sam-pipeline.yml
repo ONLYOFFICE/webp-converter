@@ -3,6 +3,7 @@ on:
     branches:
       - develop
       - main
+      - test
 
 jobs:
   build-deploy:
@@ -26,6 +27,8 @@ jobs:
             echo "BUCKET_NAME=${{ secrets.DEVELOP_BUCKET_NAME }}" >> $GITHUB_ENV
           elif [[ "${{ github.ref_name }}" == "main" ]]; then
             echo "BUCKET_NAME=${{ secrets.MAIN_BUCKET_NAME }}" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "test" ]]; then
+            echo "BUCKET_NAME=${{ secrets.TEST_BUCKET_NAME }}" >> $GITHUB_ENV
           fi
           
       # Set S3 BUCKET NAME
