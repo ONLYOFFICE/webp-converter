@@ -7,7 +7,7 @@ const S3 = new AWS.S3({
 
 const Sharp = require('sharp')
 const BUCKET = 'bucket_placeholder'
-const QUALITY = 75
+const QUALITY = 100
 
 exports.handler = async (event, context, callback) => {
   const { request, response } = event.Records[0].cf
@@ -29,7 +29,7 @@ exports.handler = async (event, context, callback) => {
       try {
         const bucketResource = await S3.getObject({ Bucket: BUCKET, Key: decodeURI(s3key) }).promise()
         const sharpImageBuffer = await Sharp(bucketResource.Body)
-          .webp({ quality: +QUALITY; lossless: true })
+          .webp({ quality: +QUALITY, lossless: true })
           .toBuffer()
         console.log("Got the S3 image and converted. Trying to put it into S3")
         await S3.putObject({
