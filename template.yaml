@@ -41,7 +41,7 @@ Resources:
       Architectures:
         - x86_64
       MemorySize: 512
-      Timeout: 10
+      Timeout: 15
       Role: !GetAtt WebEdgeLambdaRole.Arn
 
   OriginResponseFunctionVersion:
