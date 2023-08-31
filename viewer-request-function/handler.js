@@ -14,7 +14,7 @@ exports.handler = (event, context, callback) => {
 const browsersToInclude = [
     { browser: 'Edge', version: 18 },
     { browser: 'Firefox', version: 65 },
-    { browser: 'Chrome', version: 23 },
+    { browser: 'Chrome', version: 24 },
     { browser: 'Opera', version: 13 },
     { browser: 'Opera Mini', version: 1 },
     { browser: 'Android', version: 53 },
