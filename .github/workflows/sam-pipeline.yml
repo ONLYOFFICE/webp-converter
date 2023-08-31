@@ -20,7 +20,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
           role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
-          role-session-name: deployment
           role-duration-seconds: 3600
           role-skip-session-tagging: true
 
