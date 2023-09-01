@@ -7,7 +7,7 @@ const S3 = new AWS.S3({
 
 const Sharp = require('sharp')
 const BUCKET = 'bucket_placeholder'
-const QUALITY = 90
+const QUALITY = 100
 
 exports.handler = async (event, context, callback) => {
   const { request, response } = event.Records[0].cf
