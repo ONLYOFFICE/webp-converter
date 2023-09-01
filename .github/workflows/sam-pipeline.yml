@@ -14,11 +14,14 @@ jobs:
         with:
           submodules: recursive
       - uses: aws-actions/setup-sam@v2
-      - uses: aws-actions/configure-aws-credentials@v2
+      - uses: aws-actions/configure-aws-credentials@v3
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+          role-to-assume: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
+          role-duration-seconds: 3600
+          role-skip-session-tagging: true
 
       # Set BUCKET_NAME environment variable based on the branch
       - name: Set BUCKET_NAME
@@ -35,5 +38,6 @@ jobs:
       - run: sed -i "s/'bucket_placeholder'/'${BUCKET_NAME}'/g" ./origin-response-function/handler.js
 
       # Build and deploy stack
+      - run: echo "CLOUDFORMATION_EXECUTION_ROLE=${{ secrets.CLOUDFORMATION_EXECUTION_ROLE }}" >> $GITHUB_ENV
       - run: sam build -u
-      - run: sam deploy --config-file ${GITHUB_REF_NAME}-config.toml --parameter-overrides S3Bucket=${BUCKET_NAME}
+      - run: sam deploy --config-file ${GITHUB_REF_NAME}-config.toml --role-arn ${CLOUDFORMATION_EXECUTION_ROLE}
