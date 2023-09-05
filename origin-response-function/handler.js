@@ -28,10 +28,21 @@ exports.handler = async (event, context, callback) => {
       console.log("Printing S3key", s3key)
       try {
         const bucketResource = await S3.getObject({ Bucket: BUCKET, Key: decodeURI(s3key) }).promise()
+
+        let webpOptions;
+      
+        if (['jpg', 'jpeg'].includes(format)) {
+          webpOptions = { quality: +QUALITY };
+        } else if (format === 'png') {
+          webpOptions = { quality: +QUALITY, lossless: true };
+        }
+
         const sharpImageBuffer = await Sharp(bucketResource.Body)
-          .webp({ quality: +QUALITY, lossless: true })
-          .toBuffer()
+          .webp(webpOptions)
+          .toBuffer();
+
         console.log("Got the S3 image and converted. Trying to put it into S3")
+
         await S3.putObject({
           Body: sharpImageBuffer,
           Bucket: BUCKET,
