@@ -30,7 +30,7 @@ exports.handler = async (event, context, callback) => {
         const bucketResource = await S3.getObject({ Bucket: BUCKET, Key: decodeURI(s3key) }).promise()
         const fileSizeInKb = bucketResource.ContentLength / 1024;  // Convert to KB
 
-        let webpOptions;
+        let webpOptions = {};
 
         if (['jpg', 'jpeg'].includes(format)) {
           webpOptions.quality = +QUALITY;
