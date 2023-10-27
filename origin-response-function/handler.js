@@ -7,7 +7,8 @@ const S3 = new AWS.S3({
 
 const Sharp = require('sharp')
 const BUCKET = 'bucket_placeholder'
-const QUALITY = 100
+const QUALITY_JPG = 100
+const QUALITY_PNG = 75
 
 exports.handler = async (event, context, callback) => {
   const { request, response } = event.Records[0].cf
@@ -33,14 +34,14 @@ exports.handler = async (event, context, callback) => {
         let webpOptions = {};
 
         if (['jpg', 'jpeg'].includes(format)) {
-          webpOptions.quality = +QUALITY;
+          webpOptions.quality = +QUALITY_JPG;
           if (fileSizeInKb < 250) {
             webpOptions.lossless = true;
           }
         } else if (format === 'png') {
-          webpOptions = { quality: +QUALITY, lossless: true };
+          webpOptions.quality = +QUALITY_PNG;
         }
-      
+
         console.log("webpOptions:", webpOptions)
 
         const sharpImageBuffer = await Sharp(bucketResource.Body)
@@ -75,4 +76,4 @@ exports.handler = async (event, context, callback) => {
     }
   }
   callback(null, response)
- }
+}
