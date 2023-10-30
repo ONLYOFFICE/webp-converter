@@ -35,7 +35,7 @@ exports.handler = async (event, context, callback) => {
 
         if (['jpg', 'jpeg'].includes(format)) {
           webpOptions.quality = +QUALITY_JPG;
-          if (fileSizeInKb < 250) {
+          if (fileSizeInKb < 235) {
             webpOptions.lossless = true;
           }
         } else if (format === 'png') {
