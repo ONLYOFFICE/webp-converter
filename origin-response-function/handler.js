@@ -40,6 +40,7 @@ exports.handler = async (event, context, callback) => {
           }
         } else if (format === 'png') {
           webpOptions.quality = +QUALITY_PNG;
+          webpOptions.lossless = true;
         }
 
         console.log("webpOptions:", webpOptions)
