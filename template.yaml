@@ -19,7 +19,7 @@ Resources:
     Properties:
       CodeUri: viewer-request-function/
       Handler: handler.handler
-      Runtime: nodejs18.x
+      Runtime: nodejs20.x
       Architectures:
         - x86_64
       MemorySize: 128
@@ -37,7 +37,7 @@ Resources:
     Properties:
       CodeUri: origin-response-function/
       Handler: handler.handler
-      Runtime: nodejs18.x
+      Runtime: nodejs20.x
       Architectures:
         - x86_64
       MemorySize: 512
